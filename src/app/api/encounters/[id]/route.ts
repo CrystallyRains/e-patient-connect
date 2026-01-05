@@ -4,7 +4,7 @@ import { EncounterService } from '@/lib/services/encounter-service'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const authResult = await authenticateRequest(request)
@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const user = authResult.user!
-    const encounterId = params.id
+    const { id: encounterId } = await params
 
     // Get encounter details
     const encounterResult = await EncounterService.getEncounter(encounterId)
@@ -52,7 +52,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const authResult = await authenticateRequest(request, ['PATIENT', 'OPERATOR'])
@@ -62,7 +62,7 @@ export async function PUT(
     }
 
     const user = authResult.user!
-    const encounterId = params.id
+    const { id: encounterId } = await params
     const body = await request.json()
 
     const {
